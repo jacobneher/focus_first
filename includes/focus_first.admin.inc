@@ -40,4 +40,6 @@ function focus_first_admin_settings() {
 function focus_first_admin_settings_submit(&$form, &$form_state) {
   variable_set('focus_first_visibility', $form_state['values']['visibility']);
   variable_set('focus_first_pages', $form_state['values']['pages']);
+  
+  drupal_set_message('Configuration settings have been saved.');
 }
