@@ -1,0 +1,46 @@
+<?php
+
+/**
+ * Implements hook_init().
+ */
+function focus_first_init() {
+  $pages = variable_get('focus_first_pages');
+  // Convert the Drupal path to lowercase
+  $path = drupal_strtolower(drupal_get_path_alias($_GET['q']));
+  // Compare the lowercase internal and lowercase path alias (if any).
+  $page_match = drupal_match_path($path, $pages);
+  if ($path != $_GET['q']) {
+    $page_match = $page_match || drupal_match_path($_GET['q'], $pages);
+  }
+  
+  // 'Only the listed pages' selected
+  if (variable_get('focus_first_visibility')) {
+    if ($page_match) {
+      drupal_add_js(drupal_get_path('module', 'focus_first') . '/js/focus_first.js');
+    }
+  }
+  // 'All pages except those listed' selected
+  else {
+    if (!$page_match) {
+      drupal_add_js(drupal_get_path('module', 'focus_first') . '/js/focus_first.js');
+    }
+  }
+}
+
+/**
+ * Implements hookmenu().
+ */
+function focus_first_menu() {
+  $items = array();
+  $items['admin/config/user-interface/focus-first'] = array(
+    'title' => 'Focus First',
+    'description' => 'Configure settings for Focus First.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('focus_first_admin_settings'),
+    'access arguments' => array(TRUE),
+    'file' => 'includes/focus_first.admin.inc',
+    'type' => MENU_NORMAL_ITEM,
+  );
+  
+  return $items;
+}
